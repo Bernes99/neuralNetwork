@@ -35,13 +35,15 @@ namespace neuralNetwork
             for (int i = 0; i < layerSize; i++)
             {
                 bias[i] = random.NextDouble() * Math.Sqrt(2.0 / bias.Length);
+                //bias[i] = 0.3;
             }
             for (int i = 0; i < layerSize; i++)
             {
                 weights[i] = new double[numberNeuronsInPrevLayer];
                 for (int j = 0; j < numberNeuronsInPrevLayer; j++)
                 {
-                    weights[i][j] = random.NextDouble() * Math.Sqrt(2.0 / weights[i].Length);
+                    weights[i][j] = random.NextDouble() * Math.Sqrt(2.0 / weights[i].Length); /// -0.1
+                    //weights[i][j] = 0.3;
                 }
             }
 
@@ -83,7 +85,7 @@ namespace neuralNetwork
         /// <summary>
         /// Metoda słyzy jako szablon do obiczania pochodnej funkcji sigmoidalnej 
         /// </summary>
-        /// <param name="x"> wynik fukcji sigmoid</param>
+        /// <param name="x"> wynik fukcji sigmoidalnej</param>
         /// <returns> Zwraca wynik pochodniej podanje funkcji sigmoidalnej </returns>
         public static double DerivativeSigmoid(double x)
         {

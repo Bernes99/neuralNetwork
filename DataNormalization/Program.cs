@@ -17,7 +17,7 @@ namespace DataNormalization
             CultureInfo cultureInfo = CultureInfo.InvariantCulture;
 
             string path = @"../../Faults.NNA";
-            string saveInputPath = @"../../../neuralNetwork/intput.txt";
+            string saveInputPath = @"../../../neuralNetwork/input.txt";
             string saveOutputPath = @"../../../neuralNetwork/output.txt";
             
             double[][] input;
@@ -120,6 +120,7 @@ namespace DataNormalization
                 for (int j = 0; j < values[i].Length; j++)
                 {
                     values[i][j] = (values[i][j] - min[j]) / (max[j] - min[j]);
+                    //values[i][j] = 2 * (values[i][j] - min[j]) / (max[j] - min[j]) - 1;
                 }
             }
             return values;
@@ -145,6 +146,7 @@ namespace DataNormalization
                 {
                     sw.Write(values[i][j]+"\t");
                 }
+                //sw.Write('\n');
             }
             sw.Close();
 
