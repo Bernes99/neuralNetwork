@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,8 @@ namespace neuralNetwork
         {
             Console.WriteLine("Hello world");
             //Console.ReadKey();
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
 
             double[][] inputs = new double[][]
             {
@@ -58,6 +61,9 @@ namespace neuralNetwork
                 Console.WriteLine("błąd: " + 0.5 * (target[j][0] - outputVal[0]) * (target[j][0] - outputVal[0]));
                 Console.WriteLine("      ");
             }
+            stopwatch.Stop();
+            TimeSpan timeSpan = stopwatch.Elapsed;
+            Console.WriteLine("Czas trwania uczenia: {0:00}:{1:00}:{2:00}.{3}", timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
 
             Console.ReadKey();
         }
