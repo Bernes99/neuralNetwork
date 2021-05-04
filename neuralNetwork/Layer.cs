@@ -13,6 +13,7 @@ namespace neuralNetwork
         public double[][] weights; //< tablica wag przejść pomędzy neuronami; pierwszy indeks to neuron z którego rzejscie sie zaczyna, drugi indeks to neuron do którego przejscie zmierza
         public double[] error; //< tablica błędów licznonych dla kazdego neuronu 
         public double[] bias; //< tablica biasów dla kazdego neurou 
+        public double[][] velocity;
         public int layerSize; //< zmienna przechowująca rozmiar warstwy
 
         Random random = new Random();
@@ -31,17 +32,21 @@ namespace neuralNetwork
 
             // zasiewanie pierwotne (ustawianie losowych wartości wag i biasów)
             weights = new double[layerSize][];
+            velocity = new double[layerSize][];
             bias = new double[layerSize];
             for (int i = 0; i < layerSize; i++)
             {
-                bias[i] = random.NextDouble() * Math.Sqrt(2.0 / bias.Length);
+                //bias[i] = random.NextDouble() * Math.Sqrt(2.0 / bias.Length);
+                bias[i] = 0;
                 //bias[i] = 0.3;
             }
             for (int i = 0; i < layerSize; i++)
             {
                 weights[i] = new double[numberNeuronsInPrevLayer];
+                velocity[i] = new double[numberNeuronsInPrevLayer];
                 for (int j = 0; j < numberNeuronsInPrevLayer; j++)
                 {
+                    velocity[i][j] = 0.0;
                     weights[i][j] = random.NextDouble() * Math.Sqrt(2.0 / weights[i].Length); /// -0.1
                     //weights[i][j] = 0.3;
                 }

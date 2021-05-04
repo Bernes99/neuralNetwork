@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace DataNormalization
 {
@@ -14,6 +16,8 @@ namespace DataNormalization
         static int numberOfOutputData = 7;
         static void Main(string[] args)
         {
+
+
             CultureInfo cultureInfo = CultureInfo.InvariantCulture;
 
             string path = @"../../Faults.NNA";

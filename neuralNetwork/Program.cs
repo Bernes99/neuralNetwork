@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace neuralNetwork
 {
@@ -59,11 +61,11 @@ namespace neuralNetwork
             //    //new double[]{0.9}
             //};
 
-            int epoch = 10000;
+            int epoch = 5000;
             double errorGoal = Math.Pow(0.5, 2.0 ) / inputs.Length;
 
-
-            Network net = new Network(new int[] { variableInInput, 44,30,27, variableInTarget });
+            double[] bledyWykres = new double[epoch];
+            Network net = new Network(new int[] { variableInInput, 40,20, variableInTarget });
             //Network net = new Network(new int[] { 2, 2, 1});
 
             double MSE = 1; //< błąd kwadratowy
@@ -75,13 +77,14 @@ namespace neuralNetwork
                     //Array.ForEach(net.Feedforward(inputs[j]), Console.WriteLine); 
                     double[] outputVal = net.Feedforward(inputs[j]);
                     net.BackPropagateError(target[j]);
-                    net.GradientDescent(0.3);
+                    net.GradientDescent(0.01,0.9);
                     MSE += (target[j][0] - outputVal[0]) * (target[j][0] - outputVal[0]);
                     //Console.WriteLine("-" + MSE);
                 }
 
                 MSE = MSE / inputs.Length;
-                //Console.WriteLine("-" + MSE);
+                bledyWykres[i] = MSE;
+                Console.WriteLine("-" + MSE);
 
             }
 
@@ -141,6 +144,26 @@ namespace neuralNetwork
             sw.WriteLine("Czas trwania uczenia: {0:00}:{1:00}:{2:00}.{3} ", timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
             sw.Close();
             /////////////////////////////////////////////////////
+
+            double[] tmp = new double[epoch];
+            for (int i = 0; i < epoch; i++)
+            {
+                tmp[i] = i;
+            }
+            /////////////////////////////////////////////////// graf
+            var pane = new ZedGraph.GraphPane();
+            var curve1 = pane.AddCurve(
+                label: "demo",
+                x: tmp,
+                y: bledyWykres,
+                color: Color.Blue);
+            curve1.Line.IsAntiAlias = true;
+            curve1.Symbol.IsVisible = false;
+            pane.AxisChange();
+            Bitmap bmp = pane.GetImage(1000, 800, dpi: 1000, isAntiAlias: true);
+            bmp.Save("zedgraph-console-quickstart.png", ImageFormat.Png);
+            ////////////////////////////////////////////////////
+
 
             Console.ReadKey();
         }

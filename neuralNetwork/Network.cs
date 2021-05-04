@@ -113,7 +113,7 @@ namespace neuralNetwork
         /// Metoda aktualizuje watrości wag oraz biasów
         /// </summary>
         /// <param name="learningRate">stopień uczenia</param>
-        public void GradientDescent(double learningRate)
+        public void GradientDescent(double learningRate,double momentum)
         {
             for (int i = 1; i < numberOfLayers; i++)
             {
@@ -122,10 +122,20 @@ namespace neuralNetwork
                     //aktualizowanie wag
                     for (int k = 0; k < layers[i-1].layerSize; k++)
                     {
-                        layers[i].weights[j][k] -= learningRate * layers[i - 1].values[k] * layers[i].error[j];
+                        //layers[i].weights[j][k] -= learningRate * layers[i - 1].values[k] * layers[i].error[j];
+                        //if (i == 1)
+                        //{
+                        //    layers[i].velocity[j][k] = learningRate * layers[i - 1].values[k] * layers[i].error[j];
+                        //}
+                        //else
+                        //{
+                            layers[i].velocity[j][k] = momentum * layers[i].velocity[j][k] - learningRate * layers[i - 1].values[k] * layers[i].error[j];
+                        //}
+
+                        layers[i].weights[j][k] += layers[i].velocity[j][k];
                     }
                     // aktualizowanie biasu
-                    layers[i].bias[j] -= learningRate * layers[i].error[j];
+                    //layers[i].bias[j] -= learningRate * layers[i].error[j];
                 }
             }
 
