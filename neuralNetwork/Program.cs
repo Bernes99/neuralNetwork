@@ -8,11 +8,13 @@ using System.Threading.Tasks;
 using System.Globalization;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Collections;
 
 namespace neuralNetwork
 {
     class Program
     {
+
         static void Main(string[] args)
         {
 
@@ -40,8 +42,30 @@ namespace neuralNetwork
             ImpotrData(inputs, inputPath);
             ImpotrData(target, targetPath);
 
+            List<InputTarget> inputTargets = new List<InputTarget>();
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                inputTargets.Add(new InputTarget(inputs[i], target[i], i));
+            }
 
-            Console.WriteLine("Hello world");
+
+            Helper.Shuffle(inputTargets);
+
+            List<InputTarget> trainData = new List<InputTarget>();
+            List<InputTarget> testData = new List<InputTarget>();
+
+            for (int i = 0; i < (int)(0.8 * inputTargets.Count()); i++) {
+                trainData.Add(inputTargets[i]);
+            }
+            for (int i = (int)(0.8 * inputTargets.Count()); i < inputTargets.Count(); i++)
+            {
+                testData.Add(inputTargets[i]);
+            }
+            trainData.Sort();
+            testData.Sort();
+
+
+            Console.WriteLine("Start");
             //Console.ReadKey();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -62,26 +86,26 @@ namespace neuralNetwork
             //};
 
             int epoch = 10000;
-            double errorGoal = Math.Pow(0.5, 2.0 ) / inputs.Length;
+            double errorGoal = Math.Pow(0.5, 2.0) / trainData.Count();
 
             double[] bledyWykres = new double[epoch];
-            Network net = new Network(new int[] { variableInInput, 40,20, variableInTarget });
+            Network net = new Network(new int[] { variableInInput, 40, 20, variableInTarget });
             //Network net = new Network(new int[] { 2, 2, 1});
 
             double MSE = 1; //< błąd kwadratowy
             for (int i = 0; i < epoch && MSE > errorGoal; i++) /// 
             {
                 MSE = 0.0;
-                for (int j = 0; j < inputs.Length; j++)
+                for (int j = 0; j < trainData.Count(); j++)
                 {
                     //Array.ForEach(net.Feedforward(inputs[j]), Console.WriteLine); 
-                    double[] outputVal = net.Feedforward(inputs[j]);
-                    net.BackPropagateError(target[j]);
-                    net.GradientDescent(0.01,0.9);
+                    double[] outputVal = net.Feedforward(trainData[j].intput);
+                    net.BackPropagateError(trainData[j].target);
+                    net.GradientDescent(0.01, 0.9);
                     double SSE = 0.0;
                     for (int n = 0; n < outputVal.Length; n++)
                     {
-                        SSE += (target[j][n] - outputVal[n]) * (target[j][n] - outputVal[n]);
+                        SSE += (trainData[j].target[n] - outputVal[n]) * (trainData[j].target[n] - outputVal[n]);
                     }
                     SSE = SSE / outputVal.Length;
                     MSE += SSE;
@@ -89,7 +113,7 @@ namespace neuralNetwork
                     //Console.WriteLine("-" + MSE);
                 }
 
-                MSE = MSE / inputs.Length;
+                MSE = MSE / trainData.Count();
                 bledyWykres[i] = MSE;
                 Console.WriteLine(MSE);
 
@@ -109,19 +133,29 @@ namespace neuralNetwork
             }
             //////////////////////////////////
 
-            double SE=0.0;
-            for (int j = 0; j < inputs.Length; j++)
+            MSE = 0;
+            int correctValues = 0;
+            double[] outputValGraph = new double[testData.Count()];
+            for (int j = 0; j < testData.Count(); j++)
             {
-                double[] outputVal = net.Feedforward(inputs[j]);
+                double[] outputVal = net.Feedforward(testData[j].intput);
                 Console.WriteLine("      ");
                 Console.WriteLine("wejscia: ");
-                Array.ForEach(inputs[j], Console.WriteLine);
+                Array.ForEach(testData[j].intput, Console.WriteLine);
                 Console.WriteLine("wyjścia: ");
                 Array.ForEach(outputVal, Console.WriteLine);
                 Console.WriteLine("Poprawna odpowiedz:");
-                Array.ForEach(target[j], Console.WriteLine);
-                SE += (target[j][0] - outputVal[0]) * (target[j][0] - outputVal[0]);
-                Console.WriteLine("błąd: " + (target[j][0] - outputVal[0]) * (target[j][0] - outputVal[0]));
+                Array.ForEach(testData[j].target, Console.WriteLine);
+
+                double SSE = 0.0;
+                for (int n = 0; n < outputVal.Length; n++)
+                {
+                    SSE += (testData[j].target[n] - outputVal[n]) * (testData[j].target[n] - outputVal[n]);
+                }
+                SSE = SSE / outputVal.Length;
+                MSE += SSE;
+
+                Console.WriteLine("błąd: " + SSE);
                 //Console.WriteLine("błąd: " + (1.0/(inputs.Length*2))* (target[j][0] - outputVal[0]) * (target[j][0] - outputVal[0]));
                 Console.WriteLine("      ");
 
@@ -130,16 +164,27 @@ namespace neuralNetwork
                 Array.ForEach(outputVal, sw.WriteLine);
 
                 sw.WriteLine("\nPoprawne odpowiedzi: ");
-                Array.ForEach(target[j], sw.WriteLine);
+                Array.ForEach(testData[j].target, sw.WriteLine);
 
-                sw.WriteLine("błąd : " + (target[j][0] - outputVal[0]) * (target[j][0] - outputVal[0]));
-                SE += (target[j][0] - outputVal[0]) * (target[j][0] - outputVal[0]);
+                sw.WriteLine("błąd : " + SSE);
                 //////////////////////////////////////////////////////////////////////
+                double taregetMaxValue = testData[j].target.Max();
+                double outputMaxValue = outputVal.Max();
+                if (testData[j].target.ToList().IndexOf(taregetMaxValue) == outputVal.ToList().IndexOf(outputMaxValue))
+                {
+                    correctValues++;
+
+                }
+
+                testData[j].outputClass = outputVal.ToList().IndexOf(outputMaxValue);
+                outputValGraph[j] = testData[j].outputClass;
+
             }
             // średni błąd kwadratowy
-            Console.WriteLine("błąd całkowity: " + (SE / inputs.Length ));
+            Console.WriteLine("błąd całkowity: " + (MSE / testData.Count()));
+            Console.WriteLine("Poprawność: " + ((double)correctValues / testData.Count()));
 
-            
+
 
             stopwatch.Stop();
             TimeSpan timeSpan = stopwatch.Elapsed;
@@ -147,8 +192,9 @@ namespace neuralNetwork
 
 
             //////////////////////////////////////////////////////
-            sw.WriteLine("błąd całkowity: " + (SE / inputs.Length));
+            sw.WriteLine("błąd całkowity: " + (MSE / testData.Count()));
             sw.WriteLine("Czas trwania uczenia: {0:00}:{1:00}:{2:00}.{3} ", timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
+            sw.WriteLine("Poprawność: " + ((double)correctValues / testData.Count()));
             sw.Close();
             /////////////////////////////////////////////////////
 
@@ -160,7 +206,7 @@ namespace neuralNetwork
             /////////////////////////////////////////////////// graf
             var pane = new ZedGraph.GraphPane();
             var curve1 = pane.AddCurve(
-                label: "demo",
+                label: "wykres błędu podczas uczenia",
                 x: tmp,
                 y: bledyWykres,
                 color: Color.Blue);
@@ -168,7 +214,40 @@ namespace neuralNetwork
             curve1.Symbol.IsVisible = false;
             pane.AxisChange();
             Bitmap bmp = pane.GetImage(1000, 800, dpi: 1000, isAntiAlias: true);
-            bmp.Save("zedgraph-console-quickstart.png", ImageFormat.Png);
+            bmp.Save("wykres_bledu.png", ImageFormat.Png);
+
+            tmp = new double[testData.Count()];
+            for (int i = 0; i < testData.Count(); i++)
+            {
+                tmp[i] = i;
+            }
+            double[] graphClassY = new double[testData.Count()];
+            for (int i = 0; i < testData.Count(); i++)
+            {
+                graphClassY[i] = testData[i].target.ToList().IndexOf(testData[i].target.Max());
+            }
+
+            pane = new ZedGraph.GraphPane();
+            curve1 = pane.AddCurve(
+                label: "klasy uszkodzeń blach",
+                x: tmp,
+                y: graphClassY,
+                color: Color.Red);
+            curve1.Line.IsAntiAlias = true;
+            curve1.Symbol.IsVisible = false;
+            var curve2 = pane.AddCurve(
+                label: "klasy uszkodzeń blach\n podane przez sieć",
+                x: tmp,
+                y: outputValGraph,
+                color: Color.Green);
+            curve2.Line.IsAntiAlias = true;
+            curve2.Symbol.IsVisible = true;
+            curve2.Symbol.Fill.Color = Color.Green;
+            curve2.Symbol.Type = ZedGraph.SymbolType.Circle;
+            pane.AxisChange();
+            bmp = pane.GetImage(1000, 800, dpi: 1000, isAntiAlias: true);
+            bmp.Save("wykres_przynaleznosci.png", ImageFormat.Png);
+
             ////////////////////////////////////////////////////
 
 
@@ -214,6 +293,8 @@ namespace neuralNetwork
             streamReader.Close();
             return x;
         }
+
+        
 
     }
     

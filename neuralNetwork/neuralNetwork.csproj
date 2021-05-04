@@ -47,6 +47,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helper.cs" />
+    <Compile Include="InputTarget.cs" />
     <Compile Include="Layer.cs" />
     <Compile Include="Network.cs" />
     <Compile Include="Program.cs" />
