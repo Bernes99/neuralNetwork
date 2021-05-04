@@ -63,7 +63,7 @@ namespace neuralNetwork
             double errorGoal = Math.Pow(0.5, 2.0 ) / inputs.Length;
 
 
-            Network net = new Network(new int[] { variableInInput, 40,20, variableInTarget });
+            Network net = new Network(new int[] { variableInInput, 44,30,27, variableInTarget });
             //Network net = new Network(new int[] { 2, 2, 1});
 
             double MSE = 1; //< błąd kwadratowy
@@ -129,14 +129,18 @@ namespace neuralNetwork
             // średni błąd kwadratowy
             Console.WriteLine("błąd całkowity: " + (SE / inputs.Length ));
 
-            //////////////////////////////////////////////////////
-            sw.WriteLine("błąd całkowity: " + (SE / inputs.Length));
-            sw.Close();
-            /////////////////////////////////////////////////////
+            
 
             stopwatch.Stop();
             TimeSpan timeSpan = stopwatch.Elapsed;
             Console.WriteLine("Czas trwania uczenia: {0:00}:{1:00}:{2:00}.{3}", timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
+
+
+            //////////////////////////////////////////////////////
+            sw.WriteLine("błąd całkowity: " + (SE / inputs.Length));
+            sw.WriteLine("Czas trwania uczenia: {0:00}:{1:00}:{2:00}.{3} ", timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds, timeSpan.Milliseconds);
+            sw.Close();
+            /////////////////////////////////////////////////////
 
             Console.ReadKey();
         }

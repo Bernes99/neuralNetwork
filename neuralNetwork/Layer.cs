@@ -85,11 +85,11 @@ namespace neuralNetwork
         /// <summary>
         /// Metoda słyzy jako szablon do obiczania pochodnej funkcji sigmoidalnej 
         /// </summary>
-        /// <param name="x"> wynik fukcji sigmoidalnej</param>
+        /// <param name="sigmoid"> wynik fukcji sigmoidalnej</param>
         /// <returns> Zwraca wynik pochodniej podanje funkcji sigmoidalnej </returns>
-        public static double DerivativeSigmoid(double x)
+        public static double DerivativeSigmoid(double sigmoid)
         {
-            return x * (1 - x);
+            return sigmoid * (1 - sigmoid);
         }
 
     }
