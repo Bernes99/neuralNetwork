@@ -61,7 +61,7 @@ namespace neuralNetwork
             //    //new double[]{0.9}
             //};
 
-            int epoch = 5000;
+            int epoch = 10000;
             double errorGoal = Math.Pow(0.5, 2.0 ) / inputs.Length;
 
             double[] bledyWykres = new double[epoch];
@@ -78,13 +78,20 @@ namespace neuralNetwork
                     double[] outputVal = net.Feedforward(inputs[j]);
                     net.BackPropagateError(target[j]);
                     net.GradientDescent(0.01,0.9);
-                    MSE += (target[j][0] - outputVal[0]) * (target[j][0] - outputVal[0]);
+                    double tmpMSE = 0.0;
+                    for (int n = 0; n < outputVal.Length; n++)
+                    {
+                        tmpMSE += (target[j][n] - outputVal[n]) * (target[j][n] - outputVal[n]);
+                    }
+                    tmpMSE = tmpMSE / outputVal.Length;
+                    MSE += tmpMSE;
+                    //MSE += (target[j][0] - outputVal[0]) * (target[j][0] - outputVal[0]);
                     //Console.WriteLine("-" + MSE);
                 }
 
                 MSE = MSE / inputs.Length;
                 bledyWykres[i] = MSE;
-                Console.WriteLine("-" + MSE);
+                Console.WriteLine(MSE);
 
             }
 

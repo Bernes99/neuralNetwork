@@ -135,7 +135,7 @@ namespace neuralNetwork
                         layers[i].weights[j][k] += layers[i].velocity[j][k];
                     }
                     // aktualizowanie biasu
-                    //layers[i].bias[j] -= learningRate * layers[i].error[j];
+                    layers[i].bias[j] -= learningRate * layers[i].error[j];
                 }
             }
 

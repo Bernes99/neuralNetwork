@@ -36,8 +36,8 @@ namespace neuralNetwork
             bias = new double[layerSize];
             for (int i = 0; i < layerSize; i++)
             {
-                //bias[i] = random.NextDouble() * Math.Sqrt(2.0 / bias.Length);
-                bias[i] = 0;
+                bias[i] = random.NextDouble() * Math.Sqrt(2.0 / bias.Length);
+                //bias[i] = 0;
                 //bias[i] = 0.3;
             }
             for (int i = 0; i < layerSize; i++)
