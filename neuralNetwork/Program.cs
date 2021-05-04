@@ -78,13 +78,13 @@ namespace neuralNetwork
                     double[] outputVal = net.Feedforward(inputs[j]);
                     net.BackPropagateError(target[j]);
                     net.GradientDescent(0.01,0.9);
-                    double tmpMSE = 0.0;
+                    double SSE = 0.0;
                     for (int n = 0; n < outputVal.Length; n++)
                     {
-                        tmpMSE += (target[j][n] - outputVal[n]) * (target[j][n] - outputVal[n]);
+                        SSE += (target[j][n] - outputVal[n]) * (target[j][n] - outputVal[n]);
                     }
-                    tmpMSE = tmpMSE / outputVal.Length;
-                    MSE += tmpMSE;
+                    SSE = SSE / outputVal.Length;
+                    MSE += SSE;
                     //MSE += (target[j][0] - outputVal[0]) * (target[j][0] - outputVal[0]);
                     //Console.WriteLine("-" + MSE);
                 }
