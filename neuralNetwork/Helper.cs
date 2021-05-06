@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace neuralNetwork
 {
     static class Helper
     {
+        /// <summary>
+        /// metoda miesza kolejność elementów w podanej liście
+        /// </summary>
         private static Random rng = new Random();
         public static void Shuffle<T>(this IList<T> list)
         {

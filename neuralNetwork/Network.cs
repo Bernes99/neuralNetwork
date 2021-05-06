@@ -18,12 +18,12 @@ namespace neuralNetwork
             numberOfLayers = layer.Length;
             layers = new Layer[numberOfLayers];
 
-            for (int i = 0; i < layers.Length ; i++)
+            for (int i = 0; i < layers.Length; i++)
             {
-                // uzywam różnych konstruktorów dla warstwy wejsciowej oraz dla reszty warstw
-                if (i >0)
+                // uzywam różnych konstruktorów dla warstwy wejściowej oraz dla reszty warstw
+                if (i > 0)
                 {
-                    layers[i] = new Layer(layer[i], layer[i -1]);
+                    layers[i] = new Layer(layer[i], layer[i - 1]);
                 }
                 else
                     layers[i] = new Layer(layer[i]);
@@ -35,7 +35,7 @@ namespace neuralNetwork
         /// <summary>
         /// Metoda ustawia wartości neuronów na wejściu
         /// </summary>
-        /// <param name="inputs"> tablica zawierajaca wartości wejsciowe</param>
+        /// <param name="inputs"> tablica zawierająca wartości wejściowe</param>
         /// <returns></returns>
         public double[] SetInputs(double[] inputs)
         {
@@ -43,18 +43,18 @@ namespace neuralNetwork
             {
                 layers[0].values[i] = inputs[i];
             }
-            
+
             return layers[0].values;
         }
 
         /// <summary>
         /// Metoda oblicza wyjście sieci
         /// </summary>
-        /// <param name="inputs"> wejścowe wartości sieci</param>
+        /// <param name="inputs"> wejściowe wartości sieci</param>
         /// <returns> Zwraca tablicę wartości neuronów z warstwy wyjściowej</returns>
         public double[] Feedforward(double[] inputs)
         {
-            // ustawiam wejscia sieci
+            // ustawiam wejścia sieci
             SetInputs(inputs);
 
             // iteruję po każdym neuronie w sieci
@@ -62,9 +62,9 @@ namespace neuralNetwork
             {
                 for (int j = 0; j < layers[i].layerSize; j++)
                 {
-                    //obliczam wartość dla kazdego neuronu sieci
+                    //obliczam wartość dla każdego neuronu sieci
                     layers[i].values[j] = Layer.Sigmoid(Layer.Sum(layers[i - 1].values, layers[i].weights[j]) + layers[i].bias[j]);
-                    // obliczam takze pochodną fukcji figmoidalnej obliczonej wyzej
+                    // obliczam także pochodną fikcji sigmoidalnej obliczonej wyżej
                     layers[i].valuesDerivative[j] = Layer.DerivativeSigmoid(layers[i].values[j]);
                 }
             }
@@ -75,37 +75,37 @@ namespace neuralNetwork
         /// <summary>
         /// Metoda wyznacza błąd na warstwie wyjściowej
         /// </summary>
-        /// <param name="deisredValues"> Wartości prawidłowe(prawidłoa odpowiedz systemu)</param>
+        /// <param name="deisredValues"> Wartości prawidłowe(prawidłowa odpowiedz systemu)</param>
         private void OutputError(double[] deisredValues)
         {
-            for (int i = 0; i < layers[numberOfLayers-1].layerSize; i++)
+            for (int i = 0; i < layers[numberOfLayers - 1].layerSize; i++)
             {
                 layers[numberOfLayers - 1].error[i] = (layers[numberOfLayers - 1].values[i] - deisredValues[i]) * layers[numberOfLayers - 1].valuesDerivative[i];
             }
         }
 
         /// <summary>
-        /// Metoda wyznacza błąd w warstwach ukrytych oraz wywołuję metodle dla warstwy wyjściowej
+        /// Metoda wyznacza błąd w warstwach ukrytych oraz wywołuję metodę dla warstwy wyjściowej
         /// </summary>
-        /// <param name="deisredValues"> Wartości prawidłowe(prawidłoa odpowiedz systemu) </param>
+        /// <param name="deisredValues"> Wartości prawidłowe(prawidłowa odpowiedz systemu) </param>
         public void BackPropagateError(double[] deisredValues)
         {
             // wyznaczanie błędów dla warstwy wyjściowej
             OutputError(deisredValues);
 
             // wyznaczanie błędów dla warstw ukrytych
-            for (int i = numberOfLayers -2; i > 0; i--)
+            for (int i = numberOfLayers - 2; i > 0; i--)
             {
                 for (int j = 0; j < layers[i].layerSize; j++)
                 {
                     layers[i].error[j] = 0;
-                    for (int k = 0; k < layers[i+1].layerSize; k++)
+                    for (int k = 0; k < layers[i + 1].layerSize; k++)
                     {
                         layers[i].error[j] += layers[i + 1].weights[k][j] * layers[i + 1].error[k] * layers[i].valuesDerivative[j];
                     }
-                    
+
                 }
-                
+
             }
         }
 
@@ -113,14 +113,14 @@ namespace neuralNetwork
         /// Metoda aktualizuje watrości wag oraz biasów
         /// </summary>
         /// <param name="learningRate">stopień uczenia</param>
-        public void GradientDescent(double learningRate,double momentum)
+        public void GradientDescent(double learningRate, double momentum)
         {
             for (int i = 1; i < numberOfLayers; i++)
             {
                 for (int j = 0; j < layers[i].layerSize; j++)
                 {
                     //aktualizowanie wag
-                    for (int k = 0; k < layers[i-1].layerSize; k++)
+                    for (int k = 0; k < layers[i - 1].layerSize; k++)
                     {
                         //layers[i].weights[j][k] -= learningRate * layers[i - 1].values[k] * layers[i].error[j];
                         //if (i == 1)
@@ -129,7 +129,7 @@ namespace neuralNetwork
                         //}
                         //else
                         //{
-                            layers[i].velocity[j][k] = momentum * layers[i].velocity[j][k] - learningRate * layers[i - 1].values[k] * layers[i].error[j];
+                        layers[i].velocity[j][k] = momentum * layers[i].velocity[j][k] - learningRate * layers[i - 1].values[k] * layers[i].error[j];
                         //}
 
                         layers[i].weights[j][k] += layers[i].velocity[j][k];
@@ -139,8 +139,8 @@ namespace neuralNetwork
                 }
             }
 
-           
-        }            
-            
+
+        }
+
     }
 }

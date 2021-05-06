@@ -1,21 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace neuralNetwork
 {
     class InputTarget : IEquatable<InputTarget>, IComparable<InputTarget>
     {
-                
 
-        public double[] intput;
-        public double[] target;
-        public int id;
-        public int outputClass;
 
-        public InputTarget(double[] intput, double[] target,int id)
+        public double[] intput; //<dane wejściowe
+        public double[] target; //< dane pożądane na wyjściu
+        public int id; //< id danych
+        public int outputClass; //< klasa do jakiej zakwalifikowano dane
+
+        public InputTarget(double[] intput, double[] target, int id)
         {
             this.intput = intput;
             this.target = target;

@@ -1,12 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Globalization;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
-using System.Drawing.Imaging;
+
 
 namespace DataNormalization
 {
@@ -20,29 +15,28 @@ namespace DataNormalization
 
             CultureInfo cultureInfo = CultureInfo.InvariantCulture;
 
-            string path = @"../../Faults.NNA";
-            string saveInputPath = @"../../../neuralNetwork/input.txt";
-            string saveOutputPath = @"../../../neuralNetwork/output.txt";
-            
-            double[][] input;
-            double[][] output;
-            
+            string path = @"../../Faults2.CSV"; //< ścieżka do pliku z oryginalnymi danymi
+            string saveInputPath = @"../../../neuralNetwork/input.txt"; //< ścieżka do pliku gdzie dane dane wejściowe będą zapisywane
+            string saveOutputPath = @"../../../neuralNetwork/output.txt";//< ścieżka do pliku gdzie dane wyjściowe będą zapisywane
 
+            double[][] input; //< tablica tablic dal danych wejściowych
+            double[][] output; //< tablica tablic dal danych wyjściowych
+
+            // sprawdzam czy istnieje plik z którego dane pobieram
             if (!File.Exists(path))
             {
                 Console.WriteLine("nie ma takiego pliku");
                 return;
             }
+
             StreamReader sr = File.OpenText(path);
-            
+            // dziele wane oddzielone tabulatorem i znakiem nowej linii
+            string[] values = sr.ReadToEnd().Split('\t', '\n');
 
 
+            int numberOfValues = values.Length / (numberOfInputData + numberOfOutputData); //< ilość danych w poliku z którego pobieram dane
 
-            string[] values = sr.ReadToEnd().Split('\t','\n');
-            
-           
-            int numberOfValues = values.Length/(numberOfInputData+ numberOfOutputData);
-
+            // inicjalizacja obu tablic
             input = new double[numberOfValues][];
             output = new double[numberOfValues][];
             for (int value = 0; value < numberOfValues; value++)
@@ -53,9 +47,9 @@ namespace DataNormalization
 
 
 
-
+            // zamieniam wartości z ciągu znaków na liczbę
             int i = 0, j = 0, k = 0, indexOfValue = 0;
-            for (int n=0;n< values.Length -1;n++)
+            for (int n = 0; n < values.Length - 1; n++)
             {
                 if (values[n].Contains("\r"))
                 {
@@ -63,7 +57,7 @@ namespace DataNormalization
                 }
                 if (i < numberOfInputData)
                 {
-                    double.TryParse(values[n],NumberStyles.Float, cultureInfo, out input[indexOfValue][j]);
+                    double.TryParse(values[n], NumberStyles.Float, cultureInfo, out input[indexOfValue][j]);
                     k = 0;
                     j++;
                 }
@@ -76,12 +70,12 @@ namespace DataNormalization
 
                 i++;
 
-                if (i>= numberOfInputData+ numberOfOutputData)
+                if (i >= numberOfInputData + numberOfOutputData)
                 {
                     i = 0;
                     indexOfValue++;
                 }
-                
+
                 //Console.WriteLine(item);
             }
 
@@ -89,12 +83,18 @@ namespace DataNormalization
 
             sr.Close();
 
+            // zapisuje oba pliki 
             SaveFile(input, saveInputPath);
             SaveFile(output, saveOutputPath);
             Console.WriteLine("zakonczono");
             Console.ReadKey();
         }
 
+        /// <summary>
+        /// Metoda normalizuje dane które zostały podane
+        /// </summary>
+        /// <param name="values"> tablica tablic z danymi do normalizacji</param>
+        /// <returns> Zwraca tablice tablic z danymi znormalizowanymi</returns>
         private static double[][] Normalization(double[][] values)
         {
             double[] max = new double[values[0].Length];
@@ -116,7 +116,7 @@ namespace DataNormalization
                     if (values[i][j] < min[j])
                     {
                         min[j] = values[i][j];
-                    } 
+                    }
                 }
             }
             for (int i = 0; i < values.Length; i++)
@@ -130,7 +130,11 @@ namespace DataNormalization
             return values;
         }
 
-
+        /// <summary>
+        /// Metoda zapisuje dane z podanej tablicy tablic do podanej ścieżki
+        /// </summary>
+        /// <param name="values"> dane do zapisania </param>
+        /// <param name="path"> ścieżka gdzie plik ma zostać zapisany</param>
         private static void SaveFile(double[][] values, string path)
         {
             StreamWriter sw;
@@ -148,7 +152,7 @@ namespace DataNormalization
             {
                 for (int j = 0; j < values[i].Length; j++)
                 {
-                    sw.Write(values[i][j]+"\t");
+                    sw.Write(values[i][j] + "\t");
                 }
                 //sw.Write('\n');
             }
